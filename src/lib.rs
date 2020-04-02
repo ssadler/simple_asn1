@@ -450,24 +450,6 @@ fn from_der_(i: &[u8], start_offset: usize) -> Result<Vec<ASN1Block>, ASN1Decode
         let body = &i[index..(index + len)];
 
         if class != ASN1Class::Universal {
-            if constructed {
-                // Try to read as explicitly tagged
-                match from_der_(body, start_offset + index) {
-                    Ok(mut items) => {
-                        if items.len() == 1 {
-                            result.push(ASN1Block::Explicit(
-                                class,
-                                soff,
-                                tag,
-                                Box::new(items.remove(0)),
-                            ));
-                            index += len;
-                            continue;
-                        }
-                    }
-                    Err(_) => {}
-                }
-            }
             result.push(ASN1Block::Unknown(
                 class,
                 constructed,
